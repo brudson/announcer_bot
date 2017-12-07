@@ -1,0 +1,8 @@
+{
+  "name": "announcer_bot",
+  "version": "0.0.1",
+  "description": "This bot will read off the username of anyone who joins the channel the bot is active in. Perfect for users that only have one monitor.",
+  "main": "bot.js",
+  "author": "Bradley Larsen, Dylan O'brien",
+  "dependencies": {}
+}
