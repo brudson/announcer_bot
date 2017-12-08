@@ -1,39 +1,36 @@
-var Discord = require('discord.io');
-var logger = require('winston');
+var Discord = require('discord.js');
 var auth = require('./auth.json');
-// Configure logger settings
-logger.remove(logger.transports.Console);
-logger.add(logger.transports.Console, {
-    colorize: true
+
+// Initialize Discord client
+var client = new Discord.Client();
+
+client.on('ready', () => {
+    console.log('I am ready!');
 });
-logger.level = 'debug';
-// Initialize Discord Bot
-var bot = new Discord.Client({
-   token: auth.token,
-   autorun: true
+
+client.on('voiceStateUpdate', (oldMember, newMember) =>{
+    let newUserChannel = newMember.voiceChannel
+    let oldUserChannel = oldMember.voiceChannel
+
+    if(oldUserChannel === undefined && newUserChannel !== undefined) {
+    // User Joins a voice channel
+        console.log("=====joined=====");
+        console.log(newUserChannel);
+
+    } else if(newUserChannel === undefined){
+    // User leaves a voice channel
+        console.log("=====left=====");
+        console.log(oldUserChannel);
+
+    }
 });
-bot.on('ready', function (evt) {
-    logger.info('Connected');
-    logger.info('Logged in as: ');
-    logger.info(bot.username + ' - (' + bot.id + ')');
+
+client.on('message', message => {
+    if (message.content === 'ping') {
+        message.channel.send('pong', {
+            tts: true
+        });
+    }
 });
-bot.on('message', function (user, userID, channelID, message, evt) {
-    // Our bot needs to know if it will execute a command
-    // It will listen for messages that will start with `!`
-    if (message.substring(0, 1) == '!') {
-        var args = message.substring(1).split(' ');
-        var cmd = args[0];
-       
-        args = args.splice(1);
-        switch(cmd) {
-            // !ping
-            case 'ping':
-                bot.sendMessage({
-                    to: channelID,
-                    message: 'Pong!'
-                });
-            break;
-            // Just add any case commands if you want to..
-         }
-     }
-});
+
+client.login(auth.token);
